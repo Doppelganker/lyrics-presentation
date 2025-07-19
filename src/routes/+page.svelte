@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { emptySong, loadSlides, slides, type Song } from '$lib/slides.js';
+	import { Search } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import { dndzone } from 'svelte-dnd-action';
 
@@ -49,7 +50,9 @@
 	}
 
 	function addSong(song: Song) {
-		playList.push(song);
+		if (!playList.includes(song)) {
+			playList.push(song);
+		}
 	}
 
 	function onKeyDown(e: string) {
@@ -109,7 +112,10 @@
 
 <section class="flex max-h-96 py-4">
 	<article class="w-full overflow-scroll">
-		<input class="ig-input" type="search" placeholder="Išči..." bind:value={search} />
+		<div class="input-group grid-cols-[auto_1fr_auto]">
+			<div class="ig-cell preset-tonal"><Search size={16} /></div>
+			<input class="ig-input" type="search" bind:value={search} />
+		</div>
 		<div class="table-wrap">
 			<table class="table">
 				<tbody class="[&>tr]:hover:preset-tonal-primary">
@@ -156,4 +162,4 @@
 
 <footer>Footer</footer>
 
-<svelte:window on:keydown|preventDefault={(e) => onKeyDown(e.key)} />
+<svelte:window on:keydown={(e) => onKeyDown(e.key)} />
