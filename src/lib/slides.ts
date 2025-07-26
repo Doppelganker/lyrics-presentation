@@ -37,7 +37,7 @@ export async function loadSlides() {
 		return {
 			id: i++,
 			title: row['Naslov'] || 'Untitled',
-			number: parseInt(row['Številka']) || undefined,
+			number: parseInt(row['ID']) || undefined,
 			tags: ['song'],
 			verses: ['', ...verses]
 		};
