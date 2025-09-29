@@ -159,76 +159,93 @@
 </header>
 <section><button onclick={openOnSecondScreen}>Open presentation Screen</button></section>
 
-<section class="flex max-h-96 py-4">
-	<article class="w-full overflow-y-scroll">
-		<div class="input-group grid-cols-[auto_1fr_auto]">
-			<div class="ig-cell preset-tonal"><Search size={16} /></div>
-			<input class="ig-input" type="search" bind:value={search} />
-		</div>
-		<div class="table-wrap">
-			<table class="table">
-				<tbody class="[&>tr]:hover:preset-tonal-primary">
-					{#each filteredList as song, i (i)}
-						<tr
-							ondblclick={() => {
-								addSong(song);
-							}}
-						>
-							<td>{song.number != undefined ? song.number : ''}</td>
-							<td>{song.title}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-	</article>
-	<article class="w-full overflow-y-scroll">
-		<div class="table-wrap">
-			<table class="table">
-				<tbody
-					class="[&>tr]:hover:preset-tonal-primary"
-					use:dndzone={{ items: playList, flipDurationMs: 150 }}
-					onconsider={(e) => (playList = e.detail.items)}
-					onfinalize={(e) => (playList = e.detail.items)}
-				>
-					{#each playList as song (song.id)}
-						<tr
-							class={song === currentSong ? 'preset-tonal-secondary' : ''}
-							ondblclick={() => {
-								showSlide(song, 0);
-							}}
-							oncontextmenu={(e) => {
-								e.preventDefault();
-								removeSong(song);
-							}}
-						>
-							<td>{song.title}</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-	</article>
-</section>
+<main class="h-screen">
+	<section class="flex max-h-2/3 py-4">
+		<article class="w-full overflow-y-scroll">
+			<div class="input-group grid-cols-[auto_1fr_auto]">
+				<div class="ig-cell preset-tonal"><Search size={16} /></div>
+				<input class="ig-input" type="search" bind:value={search} />
+			</div>
+			<div class="table-wrap">
+				<table class="table">
+					<tbody class="[&>tr]:hover:preset-tonal-primary">
+						{#each filteredList as song, i (i)}
+							<tr
+								ondblclick={() => {
+									addSong(song);
+								}}
+							>
+								<td>{song.number != undefined ? song.number : ''}</td>
+								<td>{song.title}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</article>
+		<article class="w-full overflow-y-scroll">
+			<div class="table-wrap">
+				<table class="table">
+					<tbody
+						class="[&>tr]:hover:preset-tonal-primary"
+						use:dndzone={{ items: playList, flipDurationMs: 150 }}
+						onconsider={(e) => (playList = e.detail.items)}
+						onfinalize={(e) => (playList = e.detail.items)}
+					>
+						{#each playList as song (song.id)}
+							<tr
+								class={song === currentSong ? 'preset-tonal-secondary' : ''}
+								ondblclick={() => {
+									showSlide(song, 0);
+								}}
+								oncontextmenu={(e) => {
+									e.preventDefault();
+									removeSong(song);
+								}}
+							>
+								<td>{song.title}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</article>
+	</section>
 
-<section>
-	Preview
-	<div class="flex items-center justify-center gap-8">
-		<p
-			class="flex h-56 w-128 items-center justify-center border-2 border-white text-center whitespace-pre-wrap"
-			style="font-size: 16px"
-		>
-			{currentSong.verses[currentIndex]}
-		</p>
-		<p
-			class="flex h-56 w-128 items-center justify-center border-2 border-white text-center whitespace-pre-wrap"
-			style="font-size: 16px"
-		>
-			{currentSong.verses[currentIndex + 1]}
-		</p>
-	</div>
-</section>
+	<section>
+		Preview
+		<div class="flex items-center justify-center gap-8">
+			<p
+				class="flex h-56 w-128 items-center justify-center border-2 border-white text-center whitespace-pre-wrap"
+				style="font-size: 16px"
+				ondblclick={() => showSlide(currentSong, currentIndex - 1)}
+			>
+				{currentSong.verses[currentIndex]}
+			</p>
+			<p
+				class="flex h-56 w-128 items-center justify-center border-2 border-white text-center whitespace-pre-wrap"
+				style="font-size: 16px"
+				ondblclick={() => showSlide(currentSong, currentIndex + 1)}
+			>
+				{currentSong.verses[currentIndex + 1]}
+			</p>
+			<aside class="flex flex-col gap-2 overflow-scroll">
+				{#each currentSong.verses as verse, i (i)}
+					<p
+						class="flex min-h-4 items-center justify-center border-2 p-2 text-center whitespace-pre-wrap {i ===
+						currentIndex
+							? 'border-yellow-400'
+							: 'border-white'}"
+						style="font-size: 8px;"
+						ondblclick={() => showSlide(currentSong, i)}
+					>
+						{verse}
+					</p>
+				{/each}
+			</aside>
+		</div>
+	</section>
+</main>
 
 <footer>Footer</footer>
-
 <svelte:window on:keydown={(e) => onKeyDown(e.key)} />
