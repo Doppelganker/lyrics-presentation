@@ -12,6 +12,7 @@
 	let numberTimeout: number;
 	const channel = new BroadcastChannel('presentation');
 	let search: string = $state('');
+	let previewUrl: string = $state('');
 
 	const filteredList = $derived(
 		search?.length > 0
@@ -58,6 +59,14 @@
 			}
 		}
 		channel.postMessage({ type: 'text', extra: currentSong.verses[currentIndex] });
+	}
+
+	function showImage() {
+		if (previewUrl != null && previewUrl.length > 0) {
+			channel.postMessage({ type: 'image', extra: previewUrl });
+		} else {
+			console.warn('Picture was not uploaded');
+		}
 	}
 
 	function addSong(song: Song) {
@@ -151,14 +160,28 @@
 		// // Run it soon after window opens
 		//setTimeout(tryFullscreen, 100);
 	}
+
+	function onFileChange(event: Event) {
+		const input = event.target as HTMLInputElement | null;
+		if (!input || !input.files || input.files.length === 0) return;
+
+		const f = input.files[0];
+		const reader = new FileReader();
+
+		reader.onload = () => {
+			previewUrl = reader.result as string;
+		};
+		reader.readAsDataURL(f);
+	}
 </script>
 
 <header class="flex justify-between">
 	<h1>Control Panel</h1>
+	<input type="file" accept="image/*" onchange={onFileChange} />
+	<button onclick={showImage}>Show image</button>
 	<h2>{numberBuffer}</h2>
 </header>
 <section><button onclick={openOnSecondScreen}>Open presentation Screen</button></section>
-
 <main class="h-screen">
 	<section class="flex max-h-2/3 py-4">
 		<article class="w-full overflow-y-scroll">
